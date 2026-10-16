@@ -1,0 +1,5 @@
+roms/*.nes
+roms/*.NES
+*.sav
+*.state
+.DS_Store

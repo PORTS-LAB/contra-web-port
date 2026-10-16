@@ -1,0 +1,88 @@
+<!doctype html>
+<!-- Contra Web Port — self-contained NES cabinet UI around EmulatorJS (GPL-3, bundled locally) -->
+<!-- page language: HTML5 / CSS3 / ES2020, served by any static HTTP server (see play.sh) -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0c08">
+  <title>CONTRA — Web Port</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230a0c08'/%3E%3Ctext x='8' y='11' font-size='9' text-anchor='middle' fill='%23e8442d' font-family='monospace'%3EC%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+  <main class="arcade">
+
+    <header class="deck">
+      <div class="brand">
+        <h1 class="brand-title" data-text="CONTRA">CONTRA</h1>
+        <span class="brand-sub">NES&nbsp;&middot;&nbsp;1988&nbsp;&middot;&nbsp;WEB&nbsp;PORT</span>
+      </div>
+      <div class="statusline">
+        <span class="status-chip is-standby" id="status-chip">STANDBY</span>
+        <button id="crt-toggle" class="chip-btn is-active" type="button" title="Toggle CRT scanlines">CRT</button>
+      </div>
+    </header>
+
+    <section class="cab" aria-label="Emulator cabinet">
+      <div class="crt-frame">
+        <!-- EmulatorJS mounts here (module #game); revealed when the core is ready -->
+        <div id="game" class="game-mount"></div>
+
+        <!-- boot layer: attract screen until the user powers the machine -->
+        <div class="screen-boot" id="screen-boot">
+          <div class="boot-copy">
+            <div class="boot-eyebrow">&bull;&nbsp;INSERT CARTRIDGE&nbsp;&bull;</div>
+            <div class="boot-title">CONTRA</div>
+            <div class="boot-players">1&nbsp;PLAYER &nbsp; 2&nbsp;PLAYERS &nbsp; JUNGLE</div>
+            <button class="start-btn" id="launch-btn" type="button">LAUNCH&nbsp;GAME</button>
+            <div class="picker" id="rom-picker" hidden>
+              <label class="drop-zone" id="drop-zone" for="rom-file">
+                <span class="dz-title">DROP&nbsp;.NES&nbsp;HERE</span>
+                <span class="dz-sub">or click to browse &mdash; the cartridge stays inside this browser, nothing is uploaded</span>
+              </label>
+              <input type="file" id="rom-file" accept=".nes,application/octet-stream" hidden>
+            </div>
+            <div class="boot-hint">P1 CONTROLS&nbsp;&rarr;&nbsp;&uarr;&darr;&larr;&rarr;&nbsp;ARROWS &nbsp;&middot;&nbsp; A&nbsp;X &nbsp;&middot;&nbsp; B&nbsp;Z &nbsp;&middot;&nbsp; START&nbsp;ENTER</div>
+            <button class="swap-cart" id="swap-cart" type="button" title="Forget the cartridge stored in this browser">SWAP&nbsp;CART</button>
+          </div>
+          <div class="boot-scan pulse" aria-hidden="true"></div>
+        </div>
+
+        <div class="scanlines" id="scanlines" aria-hidden="true"></div>
+        <div class="vignette" aria-hidden="true"></div>
+      </div>
+
+      <div class="cab-foot">
+        <span class="led" aria-hidden="true"></span>
+        <span>POWER</span>
+        <span class="state" id="run-state">STANDBY</span>
+        <span class="foot-right">fceumm core &middot; save states via menu</span>
+      </div>
+    </section>
+
+    <section class="pad-legend" aria-label="Controls">
+      <div class="pad-card">
+        <div class="pad-card-head">P1 CONTROLS</div>
+        <dl class="keymap">
+          <div><dt>D-Pad</dt><dd><kbd>&uarr;&darr;&larr;&rarr;</kbd></dd></div>
+          <div><dt>Fire (B)</dt><dd><kbd>Z</kbd></dd></div>
+          <div><dt>Jump (A)</dt><dd><kbd>X</kbd></dd></div>
+          <div><dt>START</dt><dd><kbd>Enter</kbd></dd></div>
+          <div><dt>SELECT</dt><dd><kbd>V</kbd></dd></div>
+          <div><dt>Gamepad</dt><dd><span class="auto">plug &amp; play</span></dd></div>
+          <div><dt>Touch</dt><dd><span class="auto">on-screen pad</span></dd></div>
+          <div><dt>Save state</dt><dd><kbd>Menu &rarr; SAVE</kbd></dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <footer class="page-foot">
+      <span>WEB PORT 1.0</span><span class="dim">&middot;</span><span>EMU 4.2.3</span><span class="dim">&middot;</span><span>CORE FCEUMM</span>
+    </footer>
+
+  </main>
+
+  <script src="app.js?v=4"></script>
+</body>
+</html>

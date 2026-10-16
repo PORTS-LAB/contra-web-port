@@ -17,7 +17,6 @@
   const fileInput = document.getElementById("rom-file");
   const dropZone = document.getElementById("drop-zone");
   const swapBtn = document.getElementById("swap-cart");
-  const crtFrame = document.querySelector(".crt-frame");
 
   const setStatus = (cls, label) => {
     chip.className = `status-chip ${cls}`;
@@ -132,26 +131,40 @@
       return;
     }
     await writeCart(file.name, buffer);
+    if (mount.hasChildNodes()) {
+      // hot swap while a game is running: store, then reboot into the new cart
+      setStatus("is-loading", "SWAP");
+      location.reload();
+      return;
+    }
     powerOn(cartUrl({ buffer }), cartLabel(file.name));
   }
 
   fileInput.addEventListener("change", () => acceptFile(fileInput.files[0]));
 
   ["dragenter", "dragover"].forEach((ev) =>
-    crtFrame.addEventListener(ev, (e) => {
-      if (picker.hidden) return;
+    window.addEventListener(ev, (e) => {
+      const hasFiles = e.dataTransfer && Array.from(e.dataTransfer.types || []).includes("Files");
+      if (!hasFiles) return;
       e.preventDefault();
+      if (!mount.hasChildNodes() && picker.hidden) openPicker();
       dropZone.classList.add("over");
     }));
-  ["dragleave", "drop"].forEach((ev) =>
-    crtFrame.addEventListener(ev, (e) => {
-      e.preventDefault();
-      dropZone.classList.remove("over");
-    }));
-  crtFrame.addEventListener("drop", (e) => {
-    if (picker.hidden) return;
-    const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  window.addEventListener("dragleave", (e) => {
+    if (e.relatedTarget === null) dropZone.classList.remove("over");
+  });
+  window.addEventListener("drop", (e) => {
+    const hasFiles = e.dataTransfer && Array.from(e.dataTransfer.types || []).includes("Files");
+    if (!hasFiles) return;
+    e.preventDefault();
+    dropZone.classList.remove("over");
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
     if (file) acceptFile(file);
+  });
+
+  // Returning visitor with a stored cartridge: say it on the button.
+  readCart().then((c) => {
+    if (c && c.buffer) launchBtn.textContent = "CONTINUE GAME";
   });
 
   swapBtn.addEventListener("click", async () => {

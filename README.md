@@ -7,17 +7,25 @@ arcade-cabinet UI. Runs fully offline: the emulator (EmulatorJS 4.2.3, GPL-3,
 ## Run
 
 ```bash
-./play.sh
+./play.sh          # this machine — browser opens at http://127.0.0.1:8647/
+./play-lan.sh      # whole home network — phone/TV at http://<lan-ip>:8647/
 ```
 
 or manually:
 
 ```bash
-python3 -m http.server 8647 --bind 127.0.0.1   # then open http://127.0.0.1:8647/
+python3 serve.py 8647            # localhost only
+python3 serve.py 8647 0.0.0.0    # any device on the LAN
 ```
 
 An HTTP server is required — browsers block the WASM emulator's fetch calls on
 `file://` pages. Chrome, Firefox and Edge all work.
+
+On a fresh browser with no `roms/` file (for example the hosted build), the
+cabinet asks for a cartridge once — drop a `.nes` anywhere on the page. It is
+stored in that browser (IndexedDB) and every later visit boots straight in;
+the button says **CONTINUE GAME** instead of asking again. Dropping another
+file at any time swaps the cartridge.
 
 ## Controls (Player 1)
 
@@ -47,7 +55,7 @@ web-port/
 ├── index.html          # the cabinet page
 ├── style.css           # CRT/bezel UI
 ├── app.js              # boot logic, cartridge picker, emulator config
-├── play.sh / serve.py  # local server launcher (no-store HTTP)
+├── play.sh / play-lan.sh / serve.py  # local + network launch, no-store HTTP
 ├── .gitignore          # keeps the cartridge out of the repo
 ├── .nojekyll           # makes GitHub Pages serve the emulator files verbatim
 ├── assets/             # pixel font (Press Start 2P, OFL)
